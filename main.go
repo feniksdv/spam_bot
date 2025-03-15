@@ -7,13 +7,11 @@ import (
 	"net/http"
 )
 
-// Структура для запроса к Ollama API
 type OllamaRequest struct {
 	Model  string `json:"model"`
 	Prompt string `json:"prompt"`
 }
 
-// Структура для ответа от Ollama API
 type OllamaResponse struct {
 	Model     string `json:"model"`
 	CreatedAt string `json:"created_at"`
@@ -22,10 +20,8 @@ type OllamaResponse struct {
 }
 
 func main() {
-	// URL API Ollama
 	url := "http://localhost:11434/api/generate"
 
-	// Создаем запрос
 	requestBody := OllamaRequest{
 		Model: "qwen2.5-coder:7b", // Меняем модель на более подходящую
 		Prompt: `Ты — система автоматической фильтрации спама. Твоя задача - проанализировать предоставленный текст и определить, является ли он спамом. Используй следующие критерии:
@@ -44,24 +40,20 @@ func main() {
 ссылке: bit.ly/superdeal!!!'`,
 	}
 
-	// Преобразуем запрос в JSON
 	jsonData, err := json.Marshal(requestBody)
 	if err != nil {
 		fmt.Println("Ошибка при создании JSON:", err)
 		return
 	}
 
-	// Создаем HTTP-запрос
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		fmt.Println("Ошибка при создании запроса:", err)
 		return
 	}
 
-	// Устанавливаем заголовки
 	req.Header.Set("Content-Type", "application/json")
 
-	// Отправляем запрос
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -70,7 +62,6 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	// Читаем ответ построчно
 	decoder := json.NewDecoder(resp.Body)
 	var lastResponse string
 
@@ -89,7 +80,6 @@ func main() {
 		}
 	}
 
-	// Выводим результат
 	if lastResponse == "" {
 		fmt.Println("Внимание: получен пустой ответ от модели")
 	} else {
